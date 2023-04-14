@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Cell from './Cell';
 import styles from './Board.module.css';
@@ -6,13 +6,15 @@ import styles from './Board.module.css';
 function Board(props) {
   const { board, columns, rows, onClick } = props;
 
-  // Convert 1D board array into 2D board array
-  const boardRows = board.reduce((acc, val, index) => {
-    const row = Math.floor(index / columns);
-    const col = index % columns;
-    acc[row][col] = val;
-    return acc;
-  }, Array(rows).fill().map(() => Array(columns).fill(0)));
+  // Memoize the boardRows array to prevent unnecessary re-renders
+  const boardRows = useMemo(() => {
+    return board.reduce((acc, val, index) => {
+      const row = Math.floor(index / columns);
+      const col = index % columns;
+      acc[row][col] = val;
+      return acc;
+    }, Array(rows).fill().map(() => Array(columns).fill(0)));
+  }, [board, columns, rows]);
 
   return (
     <div className={styles.board}>
